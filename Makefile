@@ -13,5 +13,11 @@ $(EXECUTABLE): $(OBJECTS)
 .cpp.o:
 	$(CC) $(CFLAGS) $< -o $@
 
+src/player.o: src/player.cpp
+	$(CC) $(CFLAGS) $< -o $@
+
+src/SettingsMenu.o: src/SettingsMenu.cpp
+	$(CC) $(CFLAGS) $< -o $@
+
 clean:
 	rm -rf $(OBJECTS) $(EXECUTABLE)

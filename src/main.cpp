@@ -7,6 +7,7 @@
 #include <SDL2/SDL_ttf.h>
 #include <SDL2/SDL_image.h>
 #include "include/Player.h"
+#include "include/SettingsMenu.h"
 
 using namespace std;
 
@@ -65,10 +66,12 @@ int mapTileSize = 32; // size of each tile in pixels, effects "zoom"
 // initialize a player
 Player player("NoName", 3, 3);
 
+// initialize a settings menu
+SettingsMenu settingsMenu(WINDOW_WIDTH, WINDOW_HEIGHT);
 void drawGame(SDL_Renderer* renderer, char map[MAP_WIDTH][MAP_HEIGHT]);
 void updateMemory();
 void drawStats(SDL_Renderer* renderer, TTF_Font* font);
-void inputHandle();
+void inputHandle( SettingsMenu& settingsMenu, SDL_Event& event);
 void update();
 void drawTile(SDL_Renderer* renderer, char tileType, int x, int y);
 
@@ -243,7 +246,7 @@ void drawStats(SDL_Renderer* renderer, TTF_Font* font)
     SDL_RenderFillRect(renderer, &expBarRect);
 }
 
-void inputHandle() 
+void inputHandle( SettingsMenu &settingsMenu, bool &gameRunning, Player &player, char map[MAP_WIDTH][MAP_HEIGHT]) 
 {
     SDL_Event event;
     while (SDL_PollEvent(&event))
@@ -304,6 +307,15 @@ void inputHandle()
                             mapTileSize = mapTileSize * 2;
                         }
                         break;
+                    case SDLK_m:
+                        // SettingMenu, show and hide
+                        if (!settingsMenu.isVisible()) {
+                            settingsMenu.show();
+                        } else 
+                        {
+                            settingsMenu.hide();
+                        }
+                        break;
                 }
                 break;
         }
@@ -356,13 +368,14 @@ int WinMain(int argc, char* argv[])
     while (gameRunning)
     {
         // handle input
-        inputHandle();
+        inputHandle(settingsMenu, gameRunning, player, map);
         // draw the game
         drawGame(renderer, map);
         // draw stats box
         drawStats(renderer, font);
         // update the screen
         SDL_RenderPresent(renderer);
+        settingsMenu.render(renderer, font);
         // delay to get 45 fps
         SDL_Delay(1000 / 45);
         currentFrame++;
