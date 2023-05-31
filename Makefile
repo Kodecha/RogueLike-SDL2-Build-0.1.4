@@ -1,7 +1,8 @@
 CC = g++
 CFLAGS = -c -Wall
 LDFLAGS = -lSDL2main -lSDL2 -lSDL2_image -lSDL2_ttf
-SOURCES = src/main.cpp src/player.cpp
+SRCDIR = src
+SOURCES = $(wildcard $(SRCDIR)/*.cpp)
 OBJECTS = $(SOURCES:.cpp=.o)
 EXECUTABLE = main
 
@@ -10,10 +11,7 @@ all: $(EXECUTABLE)
 $(EXECUTABLE): $(OBJECTS)
 	$(CC) $(OBJECTS) -o $@ $(LDFLAGS)
 
-.cpp.o:
-	$(CC) $(CFLAGS) $< -o $@
-
-src/player.o: src/player.cpp
+$(SRCDIR)/%.o: $(SRCDIR)/%.cpp
 	$(CC) $(CFLAGS) $< -o $@
 
 clean:

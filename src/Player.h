@@ -1,16 +1,14 @@
 #ifndef PLAYER_H
 #define PLAYER_H
 
+#include "Entity.h"
 #include <string>
 
 using namespace std;
 
-class Player
+class Player: public Entity
 {
     private:
-        string name;
-        int x;
-        int y;
         int hp;
         int maxHp;
         int mp;
@@ -18,17 +16,14 @@ class Player
         int atk;
         int def;
         int exp;
-        int lvl;
-        int gold;
-        int maxGold;
+        int level;
         int maxExp;
     public:
         Player(string name, int x, int y);
-        string getName();
         int getStat(string stat);
         void setStat(string stat, int value);
         void addStat(string stat, int value);
-        void subStat(string stat, int value);
+        void subStat(string stat, int value);   
 };
 
 #endif

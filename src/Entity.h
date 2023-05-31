@@ -8,19 +8,23 @@ using namespace std;
 class Entity
 {
     private:
+        string type;
         string name;
         int x;
-        int y;
+        int y;  
+    
     public:
-        Entity(string name, int x, int y);
-
+        Entity();
+        Entity(string type, string name, int x, int y);
+        string getType();
         string getName();
         int getX();
         int getY();
-
-        void setName(string name);
         void setX(int x);
         void setY(int y);
+        void addX(int x);
+        void addY(int y);
 };
 
-#endif
+#endif // ENTITY_H
+

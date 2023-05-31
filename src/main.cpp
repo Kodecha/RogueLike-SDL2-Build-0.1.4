@@ -6,6 +6,7 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_ttf.h>
 #include <SDL2/SDL_image.h>
+#include "Entity.h"
 #include "Player.h"
 
 using namespace std;
@@ -105,15 +106,15 @@ void drawGame(SDL_Renderer* renderer, char map[MAP_WIDTH][MAP_HEIGHT], Player pl
         for (int x = 0; x < MAP_WIDTH; x++)
         {
     // calculate the screen coordinates of the tile
-        int screenX = (x - player.getStat("x") + FOV / 2) * mapTileSize + (MAP_DISPLAY_WIDTH - FOV * mapTileSize) / 2;
-        int screenY = (y - player.getStat("y") + FOV / 2) * mapTileSize + (MAP_DISPLAY_HEIGHT - FOV * mapTileSize) / 2 + (WINDOW_HEIGHT - MAP_DISPLAY_HEIGHT) / 2;
+        int screenX = (x - player.getX() + FOV / 2) * mapTileSize + (MAP_DISPLAY_WIDTH - FOV * mapTileSize) / 2;
+        int screenY = (y - player.getY() + FOV / 2) * mapTileSize + (MAP_DISPLAY_HEIGHT - FOV * mapTileSize) / 2 + (WINDOW_HEIGHT - MAP_DISPLAY_HEIGHT) / 2;
 
             // checks if a wall "#" obscures the tiles behind it
             bool visible = true;
             for (int i = 0; i < FOV; i++)
             {
-                int rayX = player.getStat("x") + (x - player.getStat("x")) * i / FOV;
-                int rayY = player.getStat("y") + (y - player.getStat("y")) * i / FOV;
+                int rayX = player.getX() + (x - player.getX()) * i / FOV;
+                int rayY = player.getY() + (y - player.getY()) * i / FOV;
                 if (map[rayX][rayY] == '#')
                 {
                     visible = false;
@@ -121,7 +122,7 @@ void drawGame(SDL_Renderer* renderer, char map[MAP_WIDTH][MAP_HEIGHT], Player pl
                 }
             }
         // calculate the distance between the tile and the player
-        int distance = sqrt(pow(player.getStat("x") - x, 2) + pow(player.getStat("y") - y, 2));
+        int distance = sqrt(pow(player.getX() - x, 2) + pow(player.getY() - y, 2));
 
         // check if the tile is within the player's field of view
         if (distance <= FOV && visible) 
@@ -244,34 +245,34 @@ void inputHandle(bool &gameRunning, Player &player, char map[MAP_WIDTH][MAP_HEIG
                         gameRunning = false;
                         break;
                     case SDLK_UP:
-                        if (map[player.getStat("x")][player.getStat("y") - 1] != '#') // Check if the player is trying to move into a wall TODO: Make this a function
+                        if (map[player.getX()][player.getY() - 1] != '#') // Check if the player is trying to move into a wall TODO: Make this a function
                         {
-                            player.subStat("y", 1); // Move the player TODO: Make this a function in the player class
+                            player.addY(-1); // Move the player TODO: Make this a function in the player class
                         }
                         update();
                         break;
                     case SDLK_DOWN:
-                        if (map[player.getStat("x")][player.getStat("y") + 1] != '#')
+                        if (map[player.getX()][player.getY() + 1] != '#')
                         {
-                            player.addStat("y", 1);
+                            player.addY(1);
                         }
                         update();
                         break;
                     case SDLK_LEFT:
-                        if (map[player.getStat("x") - 1][player.getStat("y")] != '#')
+                        if (map[player.getX() - 1][player.getY()] != '#')
                         {
-                            player.subStat("x", 1);
+                            player.addX(-1);
                         }
                         update();
                         break;
                     case SDLK_RIGHT:
-                        if (map[player.getStat("x") + 1][player.getStat("y")] != '#')
+                        if (map[player.getX() + 1][player.getY()] != '#')
                         {
-                            player.addStat("x", 1);
+                            player.addX(1);
                         }
                         update();
                         break;
-                    case SDLK_LALT:
+                    case SDLK_RALT:
                         // zoom out
                         if (TEXTURE_TILE_SIZE > 4)
                         {
@@ -281,7 +282,7 @@ void inputHandle(bool &gameRunning, Player &player, char map[MAP_WIDTH][MAP_HEIG
                             }
                         }
                         break;
-                    case SDLK_LCTRL:
+                    case SDLK_RCTRL:
                         // zoom in
                         if (mapTileSize < 64)
                         {                    
@@ -301,7 +302,7 @@ void inputHandle(bool &gameRunning, Player &player, char map[MAP_WIDTH][MAP_HEIG
                         break;
                     case SDLK_p:
                         std::cout << "Player stats:" << endl;
-                        std::cout << "x: " << player.getStat("x") << " y: " << player.getStat("y") << endl;
+                        std::cout << "x: " << player.getX() << " y: " << player.getY() << endl;
                         std::cout << "HP: " << player.getStat("hp") << " / " << player.getStat("maxHp") << endl;
                         std::cout << "MP: " << player.getStat("mp") << " / " << player.getStat("maxMp") << endl;
                         std::cout << "Exp: " << player.getStat("exp") << " / " << player.getStat("maxExp") << endl;
@@ -321,8 +322,8 @@ void drawMiniMap(SDL_Renderer* renderer, char map[MAP_WIDTH][MAP_HEIGHT], Player
     int miniMapTileSize = 4;
 
     // draw the mini-map as only the 30x30 area around the player and only the tiles are in the memory map
-    for (int x = player.getStat("x") - 15; x < player.getStat("x") + 15; x++) {
-        for (int y = player.getStat("y") - 15; y < player.getStat("y") + 15; y++) {
+    for (int x = player.getX() - 15; x < player.getX() + 15; x++) {
+        for (int y = player.getY() - 15; y < player.getY() + 15; y++) {
 
             // Check if the tile is in the memory map
             bool tileInMemoryMap = false;
